@@ -153,6 +153,16 @@
                         <button id="fetchData">Update eigen data</button>`;
             frame.appendChild(loginDiv);
 
+            var discordButton = document.createElement('button');
+            discordButton.innerHTML = 'Join Discord';
+            discordButton.style.marginTop = '10px';
+            discordButton.style.float = 'right';
+            discordButton.onclick = function() {
+                window.open('https://discord.gg/rvETEWWQmf', '_blank');
+            };
+
+            frame.appendChild(discordButton);
+
             if (localStorage.getItem(storagetoken) !== null && localStorage.getItem(storagekey) !== null) {
                 document.getElementById('token').value = localStorage.getItem(storagetoken);
                 document.getElementById('key').value = localStorage.getItem(storagekey);
