@@ -26,7 +26,7 @@ To effectively use the Troopcounter, you must enter a token and key associated w
 * Manual Submission: You can also manually submit your troop data at any time by clicking the "Update own data" button.
 ### Installation
 1. Install a user script manager like Tampermonkey for your browser.
-2. Add the Troopcounter script via the following link: Troopcounter Script.
+2. Add the Troopcounter script via the following link: [Troopcounter Script.](https://greasyfork.org/en/scripts/503469-troopcounter)
 3. Open Grepolis and start using the Troopcounter by entering your group's token and key.
 # Troepenteller Script (Nederlands handleiding)
 
@@ -56,7 +56,7 @@ Om de Troepenteller effectief te gebruiken, moet je een token en sleutel invoere
 * Handmatige Inzending: Je kunt je troepgegevens ook op elk moment handmatig indienen door op de knop "Update eigen data" te klikken.
 ### Installatie
 1. Installeer een gebruikersscriptbeheerder zoals Tampermonkey voor je browser.
-2. Voeg het Troepenteller-script toe via de volgende link: Troepenteller Script.
+2. Voeg het Troepenteller-script toe via de volgende link: [Troepenteller Script.](https://greasyfork.org/en/scripts/503469-troopcounter)
 3. Open Grepolis en begin met het gebruiken van de Troepenteller door de token en sleutel van je groep in te voeren.
 
 ![overview](overview.png)
