@@ -1,4 +1,9 @@
 # Troopcounter Script (English guide)
+
+## Disclaimer
+
+This script is currently under review for use on the NL Grepolis servers and cannot be used until it has been approved. Once approved, it should only be used on the NL servers. I am not responsible for any misuse of this script, including manipulating it to perform unauthorized actions. If you get banned for using or abusing this script, I am not responsible.
+
 ## Overview
 The Troopcounter script is a custom-developed tool designed for players of the game Grepolis to track and manage troop data efficiently. This tool enables synchronization of troop information with a central server, viewing troop counts of group members, and regular updates of your own data. It is particularly useful for players who are part of an organized group and wish to maintain an overview of collective troop strength.
 
@@ -24,6 +29,11 @@ To effectively use the Troopcounter, you must enter a token and key associated w
 2. Add the Troopcounter script via the following link: Troopcounter Script.
 3. Open Grepolis and start using the Troopcounter by entering your group's token and key.
 # Troepenteller Script (Nederlands handleiding)
+
+## Disclaimer
+
+Dit script is momenteel in beoordeling voor gebruik op de NL Grepolis-servers en kan niet worden gebruikt totdat het is goedgekeurd. Na goedkeuring mag het alleen worden gebruikt op de NL-servers. Ik ben niet verantwoordelijk voor misbruik van dit script, inclusief het manipuleren ervan om ongeautoriseerde acties uit te voeren. Als je wordt verbannen door het gebruik of misbruik van dit script, ben ik niet verantwoordelijk.
+
 ## Overzicht
 Het Troepenteller-script is een op maat gemaakte tool voor spelers van het spel Grepolis om troepen efficiënt te volgen en te beheren. Met deze tool kun je troepeninformatie synchroniseren met een centrale server, de troepenaantallen van groepsleden bekijken en regelmatig je eigen gegevens bijwerken. Dit is vooral handig voor spelers die deel uitmaken van een georganiseerde groep en een overzicht willen houden van de collectieve troepensterkte.
 
