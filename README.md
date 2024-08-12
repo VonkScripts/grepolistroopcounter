@@ -1,1 +1,53 @@
-# grepolistroopcounter
+
+Certainly! Here is the README content formatted with Markdown using headings (#, ##, etc.):
+
+Troopcounter Script
+Overview
+The Troopcounter script is a custom-developed tool designed for players of the game Grepolis to track and manage troop data efficiently. This tool enables synchronization of troop information with a central server, viewing troop counts of group members, and regular updates of your own data. It is particularly useful for players who are part of an organized group and wish to maintain an overview of collective troop strength.
+
+
+Features
+Group Synchronization: Synchronize your troop data with a server using a group-specific token and key.
+Automatic Updates: The script automatically updates your data every 10 minutes.
+Manual Data Submission: You can manually update your troop data at any time by clicking a button.
+Local Storage: Your token and key are stored locally, so you don't need to re-enter them every time you play.
+How It Works
+Token and Key
+To effectively use the Troopcounter, you must enter a token and key associated with your group. These credentials are essential for sending your data to the server and retrieving troop data of other group members.
+
+If you do not fill in a token and key, you will not be able to send or retrieve data from the API.
+If you enter a valid token and key for an existing group, you will be able to both send your data and retrieve troop counts for all members of the group.
+The token and key are stored locally in the browser's local storage, meaning they will persist between sessions on the same device. However, they are not shared across different devices.
+
+Data Submission
+Automatic Submission: Your troop data is automatically submitted to the server every 10 minutes.
+Manual Submission: You can also manually submit your troop data at any time by clicking the "Update own data" button.
+Installation
+Install a user script manager like Tampermonkey for your browser.
+Add the Troopcounter script via the following link: Troopcounter Script.
+Open Grepolis and start using the Troopcounter by entering your group's token and key.
+Troepenteller Script
+Overzicht
+Het Troepenteller-script is een op maat gemaakte tool voor spelers van het spel Grepolis om troepen efficiënt te volgen en te beheren. Met deze tool kun je troepeninformatie synchroniseren met een centrale server, de troepenaantallen van groepsleden bekijken en regelmatig je eigen gegevens bijwerken. Dit is vooral handig voor spelers die deel uitmaken van een georganiseerde groep en een overzicht willen houden van de collectieve troepensterkte.
+
+
+Functies
+Groep Synchronisatie: Synchroniseer je troepgegevens met een server met behulp van een groepsspecifieke token en sleutel.
+Automatische Updates: Het script werkt je gegevens automatisch elke 10 minuten bij.
+Handmatige Gegevensinzending: Je kunt je troepgegevens op elk moment handmatig bijwerken door op een knop te klikken.
+Lokale Opslag: Je token en sleutel worden lokaal opgeslagen, zodat je ze niet elke keer hoeft in te voeren.
+Hoe Het Werkt
+Token en Sleutel
+Om de Troepenteller effectief te gebruiken, moet je een token en sleutel invoeren die gekoppeld zijn aan je groep. Deze inloggegevens zijn essentieel voor het versturen van je gegevens naar de server en het ophalen van troepeninformatie van andere groepsleden.
+
+Als je geen token en sleutel invult, kun je geen gegevens versturen naar de API en ook geen gegevens opvragen.
+Als je een geldige token en sleutel invoert voor een bestaande groep, kun je zowel je gegevens versturen als de troepenaantallen van alle leden van de groep opvragen.
+De token en sleutel worden lokaal opgeslagen in de browser's local storage, wat betekent dat ze bewaard blijven tussen sessies op hetzelfde apparaat. Ze worden echter niet gedeeld tussen verschillende apparaten.
+
+Gegevensinzending
+Automatische Inzending: Je troepgegevens worden elke 10 minuten automatisch naar de server gestuurd.
+Handmatige Inzending: Je kunt je troepgegevens ook op elk moment handmatig indienen door op de knop "Update eigen data" te klikken.
+Installatie
+Installeer een gebruikersscriptbeheerder zoals Tampermonkey voor je browser.
+Voeg het Troepenteller-script toe via de volgende link: Troepenteller Script.
+Open Grepolis en begin met het gebruiken van de Troepenteller door de token en sleutel van je groep in te voeren.
