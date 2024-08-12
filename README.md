@@ -49,4 +49,4 @@ Om de Troepenteller effectief te gebruiken, moet je een token en sleutel invoere
 2. Voeg het Troepenteller-script toe via de volgende link: Troepenteller Script.
 3. Open Grepolis en begin met het gebruiken van de Troepenteller door de token en sleutel van je groep in te voeren.
 
-![alt text](image.png)
+![overview](overview.png)
