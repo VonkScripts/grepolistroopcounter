@@ -1,19 +1,17 @@
 // ==UserScript==
 // @name         Troopcounter
 // @namespace    http://tampermonkey.net/
-// @version      2024-04-01
+// @version      2024-08-13
 // @description  Simple custom made troopcounter
 // @author       Vonk
 // @match        https://*.grepolis.com/game/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @grant        none
-// @downloadURL https://update.greasyfork.org/scripts/488282/Troopcounter.user.js
-// @updateURL https://update.greasyfork.org/scripts/488282/Troopcounter.meta.js
 // ==/UserScript==
-
+ 
 (function () {
     'use strict';
-
+ 
     $(document).ready(function () {
         addTroopCounterButton();
         setTimeout(function () {
@@ -22,13 +20,13 @@
                 setInterval(fetchData, 600000);
             }
         }, 10000);
-
+ 
         const worldId = Game.world_id;
-
+ 
         const storagetoken = `token_${worldId}`;
         const storagekey = `key_${worldId}`;
-
-
+ 
+ 
         function addTroopCounterButton() {
             if (document.getElementById('troopCounterButton') == null) {
                 var a = document.createElement('div');
@@ -44,7 +42,7 @@
                 });
             }
         }
-
+ 
         var troops = [
             { "id": 1, "name": "sword" },
             { "id": 2, "name": "archer" },
@@ -78,7 +76,7 @@
             { "id": 30, "name": "satyr" },
             { "id": 31, "name": "calydonian_boar" }
         ];
-
+ 
         function createTroopcounterWindow() {
             var windowExists = false;
             var windowItem = null;
@@ -103,9 +101,9 @@
             var title = windowItem;
             var frame = title.parentElement.parentElement.children[1].children[4];
             frame.innerHTML = '';
-
-
-
+ 
+ 
+ 
             var html = document.createElement('html');
             var body = document.createElement('div');
             var head = document.createElement('head');
@@ -113,21 +111,21 @@
             element.innerHTML = "TroopCounter";
             element.style.margin = '0 auto';
             body.appendChild(element);
-
+ 
             var tableContainer = document.createElement('div');
             tableContainer.style.height = '300px';
             tableContainer.style.overflowY = 'auto';
-
+ 
             var table = document.createElement('table');
             table.id = "troopcounterTable";
             table.style.overflowX = 'scroll';
-
+ 
             tableContainer.appendChild(table);
             var headerRow = document.createElement('tr');
             var playernameHeader = document.createElement('th');
             playernameHeader.textContent = 'Playername';
             headerRow.appendChild(playernameHeader);
-
+ 
             troops.forEach(function (troop) {
                 var th = document.createElement('th');
                 var spanElement = document.createElement('span');
@@ -135,13 +133,13 @@
                 th.appendChild(spanElement);
                 headerRow.appendChild(th);
             });
-
+ 
             table.appendChild(headerRow);
-
-
+ 
+ 
             body.appendChild(tableContainer);
             frame.appendChild(body);
-
+ 
             // Add login inputs
             var loginDiv = document.createElement('div');
             loginDiv.style.marginTop = "10px";
@@ -152,7 +150,7 @@
                         <button id="loadButton">Laad troepenoverzicht</button>
                         <button id="fetchData">Update eigen data</button>`;
             frame.appendChild(loginDiv);
-
+ 
             var discordButton = document.createElement('button');
             discordButton.innerHTML = 'Join Discord';
             discordButton.style.marginTop = '10px';
@@ -160,30 +158,30 @@
             discordButton.onclick = function() {
                 window.open('https://discord.gg/rvETEWWQmf', '_blank');
             };
-
+ 
             frame.appendChild(discordButton);
-
+ 
             if (localStorage.getItem(storagetoken) !== null && localStorage.getItem(storagekey) !== null) {
                 document.getElementById('token').value = localStorage.getItem(storagetoken);
                 document.getElementById('key').value = localStorage.getItem(storagekey);
             };
-
+ 
             frame.appendChild(loginDiv);
             document.getElementById('saveButton').addEventListener('click', function () {
                 var token = document.getElementById('token').value;
                 var key = document.getElementById('key').value;
                 localStorage.setItem(storagetoken, token);
                 localStorage.setItem(storagekey, key);
-
+ 
                 setTimeout(function () {
                     location.reload();
                 }, 1000);
             });
-
-
-
+ 
+ 
+ 
             // Event listener for login button
-
+ 
             // Event listener for load button
             document.getElementById('loadButton').addEventListener('click', function () {
                 fetchTroopCountData();
@@ -192,7 +190,7 @@
                 fetchData();
             });
         }
-
+ 
         function fetchTroopCountData() {
             var token = localStorage.getItem(storagetoken);
             var key = localStorage.getItem(storagekey);
@@ -200,9 +198,9 @@
                 console.log('No token & key filled in.');
                 return;
             }
-
+ 
             var link = `https://localhost:7003/api/Group/GetGroupPlayersWithTroops?token=${token}&key=${key}&troopTypeStr=all`;
-
+ 
             fetch(link)
                 .then(response => response.json())
                 .then(data => {
@@ -212,7 +210,7 @@
                     console.error('Error fetching troop count data:', error);
                 });
         }
-
+ 
         function createPlayerRow(player) {
             // Check if the player already exists in the table
             var existingRow = document.getElementById('player-' + player.id);
@@ -221,38 +219,38 @@
                 updatePlayerRow(existingRow, player);
                 return existingRow;
             }
-
+ 
             // If the player doesn't exist, create a new row
             var row = document.createElement('tr');
             row.id = 'player-' + player.id;
-
+ 
             var playerNameCell = document.createElement('td');
             playerNameCell.textContent = player.name;
             row.appendChild(playerNameCell);
-
+ 
             // Create a map to store the troop counts for easy lookup
             var troopCountMap = {};
             player.troops.forEach(function (troop) {
                 troopCountMap[troop.name] = troop.count;
             });
-
+ 
             troops.forEach(function (troop) {
                 var cell = document.createElement('td');
                 cell.style.textAlign = "center";
-
+ 
                 // If troop count exists in the troop count map, add it to the cell
                 if (troopCountMap.hasOwnProperty(troop.name)) {
                     cell.textContent = troopCountMap[troop.name];
                 } else {
                     cell.textContent = "0"; // Set count to 0 if not found
                 }
-
+ 
                 row.appendChild(cell);
             });
-
+ 
             return row;
         }
-
+ 
         function updateTroopCounts(data) {
             var table = document.querySelector('#troopcounterTable'); // Assuming you have only one table in your page
             data.forEach(player => {
@@ -260,16 +258,16 @@
                 table.appendChild(row);
             });
         }
-
+ 
         function updatePlayerRow(row, player) {
             var playerNameCell = row.querySelector('td:first-child');
             playerNameCell.textContent = player.name;
-
+ 
             var troopCountMap = {};
             player.troops.forEach(function (troop) {
                 troopCountMap[troop.name] = troop.count;
             });
-
+ 
             var cells = row.querySelectorAll('td:not(:first-child)');
             cells.forEach(function (cell, index) {
                 var troop = troops[index];
@@ -280,13 +278,13 @@
                 }
             });
         };
-
+ 
         function createPlayer() {
             const playerId = Game.player_id;
             const playerName = Game.player_name;
             const allianceId = Game.alliance_id;
             const allianceName = MM.getModels().Player[Game.player_id].attributes.alliance_name;
-
+ 
             let formattedData = {
                 id: playerId,
                 name: playerName,
@@ -295,7 +293,7 @@
                 token: localStorage.getItem(storagetoken),
                 key: localStorage.getItem(storagekey)
             };
-
+ 
             fetch(`https://localhost:7003/api/Player/CreatePlayer`, {
                 method: 'POST',
                 headers: {
@@ -314,23 +312,23 @@
                     console.error('Error adding player:', error);
                 });
         }
-
+ 
         function fetchData() {
             const playerId = Game.player_id
-
+ 
             let townsObject = ITowns.getTowns();
             let cl = MM.getModels().Player[Game.player_id].attributes.cultural_step;
             let lastUpdated = Date.now().toString();
-
+ 
             let townsData = Object.values(townsObject).map(town => {
                 // Fetch home troops
                 let homeUnits = town.units();
                 let troopsInTown = [];
-
+ 
                 // Fetch outer troops
                 let outerUnits = town.unitsOuter();
                 let outerTroopsInTown = [];
-
+ 
                 // Extract home troops for the town if available
                 if (homeUnits) {
                     troopsInTown = Object.keys(homeUnits).map(unitType => ({
@@ -338,7 +336,7 @@
                         count: homeUnits[unitType]
                     }));
                 }
-
+ 
                 // Extract outer troops for the town if available
                 if (outerUnits) {
                     outerTroopsInTown = Object.keys(outerUnits).map(unitType => ({
@@ -346,7 +344,7 @@
                         count: outerUnits[unitType]
                     }));
                 }
-
+ 
                 return {
                     id: town.id,
                     name: town.name,
@@ -355,7 +353,7 @@
                     outerTroopsInTown: outerTroopsInTown
                 };
             });
-
+ 
             let formattedData = {
                 token: localStorage.getItem(storagetoken),
                 key: localStorage.getItem(storagekey),
@@ -363,7 +361,7 @@
                 culturalLevel: cl,
                 townRequests: townsData
             };
-
+ 
             fetch(`https://localhost:7003/api/Player/AddTownsToPlayer?playerId=${playerId}`, {
                 method: 'POST',
                 headers: {
@@ -388,4 +386,3 @@
         };
     });
 })();
-
