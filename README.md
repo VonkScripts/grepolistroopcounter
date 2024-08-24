@@ -73,3 +73,5 @@ Je kunt altijd onze Discord-server joinen voor het doen van functievoorstellen o
 ![overview](overview.png)
 
 ![overview](active-overview.png)
+
+![overview](group.png)
