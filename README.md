@@ -9,6 +9,7 @@ The Troopcounter script is a custom-developed tool designed for players of the g
 
 
 ## Features
+* Group creation: You can create a group for your team or alliance, where you can generate and share a token and key for your members.
 * Group Synchronization: Synchronize your troop data with a server using a group-specific token and key.
 * Manual Data Submission: You can manually update your troop data at any time by clicking a button.
 * Local Storage: Your token and key are stored locally when you click on the save token & key button, so you don't need to re-enter them every time you play.
@@ -43,6 +44,7 @@ Het Troepenteller-script is een op maat gemaakte tool voor spelers van het spel 
 
 
 ## Functies
+* Groep aanmaken: Je kunt een groep aanmaken voor jouw team of alliantie, waar je een token en een sleutel kunt genereren en delen met je leden.
 * Groep Synchronisatie: Synchroniseer je troepgegevens met een server met behulp van een groepsspecifieke token en sleutel.
 * Handmatige Gegevensinzending: Je kunt je troepgegevens op elk moment handmatig bijwerken door op een knop te klikken.
 * Lokale Opslag: Je token en sleutel worden lokaal opgeslagen als je op de save token & key knop klikt, zodat je ze niet elke keer hoeft in te voeren.
@@ -65,6 +67,8 @@ Om de Troepenteller effectief te gebruiken, moet je een token en sleutel invoere
 ### Support
 
 Je kunt altijd onze Discord-server joinen voor het doen van functievoorstellen of als je hulp nodig hebt. [Discord.](https://discord.gg/rvETEWWQmf)
+
+## Visuals
 
 ![overview](overview.png)
 
