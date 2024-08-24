@@ -1,32 +1,33 @@
 // ==UserScript==
 // @name         Troopcounter
-// @namespace    http://tampermonkey.net/
+// @namespace    https://tampermonkey.net/
 // @version      2024-08-13
 // @description  Simple custom made troopcounter
 // @author       Vonk
 // @match        https://*.grepolis.com/game/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @grant        none
+// @require      https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
 // ==/UserScript==
- 
+
 (function () {
     'use strict';
- 
+
     $(document).ready(function () {
         addTroopCounterButton();
+        console.log("Troopcounter loaded");
         setTimeout(function () {
             if (localStorage.getItem(storagetoken) !== null && localStorage.getItem(storagekey) !== null) {
                 fetchData();
-                setInterval(fetchData, 600000);
             }
         }, 10000);
- 
+
         const worldId = Game.world_id;
- 
+
         const storagetoken = `token_${worldId}`;
         const storagekey = `key_${worldId}`;
- 
- 
+
+
         function addTroopCounterButton() {
             if (document.getElementById('troopCounterButton') == null) {
                 var a = document.createElement('div');
@@ -42,7 +43,7 @@
                 });
             }
         }
- 
+
         var troops = [
             { "id": 1, "name": "sword" },
             { "id": 2, "name": "archer" },
@@ -76,7 +77,7 @@
             { "id": 30, "name": "satyr" },
             { "id": 31, "name": "calydonian_boar" }
         ];
- 
+
         function createTroopcounterWindow() {
             var windowExists = false;
             var windowItem = null;
@@ -101,31 +102,30 @@
             var title = windowItem;
             var frame = title.parentElement.parentElement.children[1].children[4];
             frame.innerHTML = '';
- 
- 
- 
-            var html = document.createElement('html');
+
             var body = document.createElement('div');
-            var head = document.createElement('head');
             var element = document.createElement('h3');
             element.innerHTML = "TroopCounter";
             element.style.margin = '0 auto';
             body.appendChild(element);
- 
+
             var tableContainer = document.createElement('div');
             tableContainer.style.height = '300px';
             tableContainer.style.overflowY = 'auto';
- 
+
             var table = document.createElement('table');
             table.id = "troopcounterTable";
             table.style.overflowX = 'scroll';
- 
+
             tableContainer.appendChild(table);
             var headerRow = document.createElement('tr');
             var playernameHeader = document.createElement('th');
             playernameHeader.textContent = 'Playername';
             headerRow.appendChild(playernameHeader);
- 
+            var culturalLevelHeader = document.createElement('th');
+            culturalLevelHeader.textContent = 'Cultural level';
+            headerRow.appendChild(culturalLevelHeader);
+
             troops.forEach(function (troop) {
                 var th = document.createElement('th');
                 var spanElement = document.createElement('span');
@@ -133,13 +133,13 @@
                 th.appendChild(spanElement);
                 headerRow.appendChild(th);
             });
- 
+
             table.appendChild(headerRow);
- 
- 
+
+
             body.appendChild(tableContainer);
             frame.appendChild(body);
- 
+
             // Add login inputs
             var loginDiv = document.createElement('div');
             loginDiv.style.marginTop = "10px";
@@ -148,49 +148,64 @@
                         Key: <input type="text" id="key"><br>
                         <button id="saveButton">Save token & key</button>
                         <button id="loadButton">Laad troepenoverzicht</button>
-                        <button id="fetchData">Update eigen data</button>`;
+                        <button id="fetchData">Update eigen data</button>
+                        `;
             frame.appendChild(loginDiv);
- 
+
+            var buttonContainer = document.createElement('div');
+            buttonContainer.style.display = 'flex';
+            buttonContainer.style.flexDirection = 'column';
+            buttonContainer.style.alignItems = 'flex-end';
+            buttonContainer.style.marginTop = '10px';
+            buttonContainer.style.float = 'right';
+            buttonContainer.style.position = 'relative';
+
+            var createGroupButton = document.createElement('button');
+            createGroupButton.innerHTML = 'Create new group';
+            createGroupButton.id = 'createGroup';
+            createGroupButton.style.marginTop = '10px';
+
             var discordButton = document.createElement('button');
             discordButton.innerHTML = 'Join Discord';
             discordButton.style.marginTop = '10px';
-            discordButton.style.float = 'right';
-            discordButton.onclick = function() {
+            discordButton.onclick = function () {
                 window.open('https://discord.gg/rvETEWWQmf', '_blank');
             };
- 
-            frame.appendChild(discordButton);
- 
+
+            buttonContainer.appendChild(createGroupButton);
+            buttonContainer.appendChild(discordButton);
+
+            frame.appendChild(buttonContainer);
+
             if (localStorage.getItem(storagetoken) !== null && localStorage.getItem(storagekey) !== null) {
                 document.getElementById('token').value = localStorage.getItem(storagetoken);
                 document.getElementById('key').value = localStorage.getItem(storagekey);
             };
- 
+
             frame.appendChild(loginDiv);
             document.getElementById('saveButton').addEventListener('click', function () {
                 var token = document.getElementById('token').value;
                 var key = document.getElementById('key').value;
                 localStorage.setItem(storagetoken, token);
                 localStorage.setItem(storagekey, key);
- 
+
                 setTimeout(function () {
                     location.reload();
                 }, 1000);
             });
- 
- 
- 
-            // Event listener for login button
- 
-            // Event listener for load button
+
             document.getElementById('loadButton').addEventListener('click', function () {
                 fetchTroopCountData();
             });
             document.getElementById('fetchData').addEventListener('click', function () {
                 fetchData();
             });
+
+            document.getElementById('createGroup').addEventListener('click', function () {
+                createGroup();
+            });
         }
- 
+
         function fetchTroopCountData() {
             var token = localStorage.getItem(storagetoken);
             var key = localStorage.getItem(storagekey);
@@ -198,9 +213,9 @@
                 console.log('No token & key filled in.');
                 return;
             }
- 
-            var link = `https://localhost:7003/api/Group/GetGroupPlayersWithTroops?token=${token}&key=${key}&troopTypeStr=all`;
- 
+
+            var link = `https://www.grepotroopcounter.be/api/Group/GetEncryptedPlayerData?token=${token}`;
+
             fetch(link)
                 .then(response => response.json())
                 .then(data => {
@@ -210,91 +225,73 @@
                     console.error('Error fetching troop count data:', error);
                 });
         }
- 
-        function createPlayerRow(player) {
-            // Check if the player already exists in the table
+
+        function createPlayerRow(encryptedPlayer) {
+            let player = countTroops(encryptedPlayer);
             var existingRow = document.getElementById('player-' + player.id);
             if (existingRow) {
-                // Update existing row with player information
                 updatePlayerRow(existingRow, player);
                 return existingRow;
             }
- 
-            // If the player doesn't exist, create a new row
+
             var row = document.createElement('tr');
             row.id = 'player-' + player.id;
- 
+
             var playerNameCell = document.createElement('td');
             playerNameCell.textContent = player.name;
             row.appendChild(playerNameCell);
- 
-            // Create a map to store the troop counts for easy lookup
-            var troopCountMap = {};
-            player.troops.forEach(function (troop) {
-                troopCountMap[troop.name] = troop.count;
-            });
- 
+
+            var culturalLevelCell = document.createElement('td');
+            culturalLevelCell.textContent = player.culturalLevel;
+            row.appendChild(culturalLevelCell);
+
             troops.forEach(function (troop) {
                 var cell = document.createElement('td');
                 cell.style.textAlign = "center";
- 
-                // If troop count exists in the troop count map, add it to the cell
-                if (troopCountMap.hasOwnProperty(troop.name)) {
-                    cell.textContent = troopCountMap[troop.name];
+
+                if (player.troopCounts.hasOwnProperty(troop.name)) {
+                    cell.textContent = player.troopCounts[troop.name];
                 } else {
-                    cell.textContent = "0"; // Set count to 0 if not found
+                    cell.textContent = "0";
                 }
- 
+
                 row.appendChild(cell);
             });
- 
+
             return row;
         }
- 
+
         function updateTroopCounts(data) {
-            var table = document.querySelector('#troopcounterTable'); // Assuming you have only one table in your page
+            var table = document.querySelector('#troopcounterTable');
             data.forEach(player => {
                 var row = createPlayerRow(player);
                 table.appendChild(row);
             });
         }
- 
+
         function updatePlayerRow(row, player) {
             var playerNameCell = row.querySelector('td:first-child');
             playerNameCell.textContent = player.name;
- 
-            var troopCountMap = {};
-            player.troops.forEach(function (troop) {
-                troopCountMap[troop.name] = troop.count;
-            });
- 
-            var cells = row.querySelectorAll('td:not(:first-child)');
+
+            var culturalLevelCell = row.querySelector('td:nth-child(2)');
+            culturalLevelCell.textContent = player.culturalLevel;
+
+            var cells = row.querySelectorAll('td:not(:first-child):not(:nth-child(2)');
+
             cells.forEach(function (cell, index) {
-                var troop = troops[index];
-                if (troopCountMap.hasOwnProperty(troop.name)) {
-                    cell.textContent = troopCountMap[troop.name];
+                var troopName = troops[index].name;
+                if (player.troopCounts.hasOwnProperty(troopName)) {
+                    cell.textContent = player.troopCounts[troopName];
                 } else {
                     cell.textContent = "0";
                 }
             });
-        };
- 
+        }
+
         function createPlayer() {
-            const playerId = Game.player_id;
-            const playerName = Game.player_name;
-            const allianceId = Game.alliance_id;
-            const allianceName = MM.getModels().Player[Game.player_id].attributes.alliance_name;
- 
-            let formattedData = {
-                id: playerId,
-                name: playerName,
-                allianceId: allianceId,
-                allianceName: allianceName,
-                token: localStorage.getItem(storagetoken),
-                key: localStorage.getItem(storagekey)
-            };
- 
-            fetch(`https://localhost:7003/api/Player/CreatePlayer`, {
+            let formattedData = getPlayerData();
+
+            fetch(`https://www.grepotroopcounter.be/api/Players`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
@@ -312,77 +309,291 @@
                     console.error('Error adding player:', error);
                 });
         }
- 
-        function fetchData() {
+
+        function getPlayerData() {
             const playerId = Game.player_id
- 
+            const playerName = Game.player_name;
+            const allianceName = MM.getModels().Player[Game.player_id].attributes.alliance_name;
             let townsObject = ITowns.getTowns();
             let cl = MM.getModels().Player[Game.player_id].attributes.cultural_step;
             let lastUpdated = Date.now().toString();
- 
+
             let townsData = Object.values(townsObject).map(town => {
-                // Fetch home troops
                 let homeUnits = town.units();
                 let troopsInTown = [];
- 
-                // Fetch outer troops
                 let outerUnits = town.unitsOuter();
                 let outerTroopsInTown = [];
- 
-                // Extract home troops for the town if available
+                let supportUnits = town.unitsSupport();
+                let supportTroopsInTown = [];
+
                 if (homeUnits) {
                     troopsInTown = Object.keys(homeUnits).map(unitType => ({
                         name: unitType,
                         count: homeUnits[unitType]
                     }));
                 }
- 
-                // Extract outer troops for the town if available
+
                 if (outerUnits) {
                     outerTroopsInTown = Object.keys(outerUnits).map(unitType => ({
                         name: unitType,
                         count: outerUnits[unitType]
                     }));
                 }
- 
+
+                if (supportUnits) {
+                    supportTroopsInTown = Object.keys(supportUnits).map(unitType => ({
+                        name: unitType,
+                        count: supportUnits[unitType]
+                    }));
+                }
+
                 return {
                     id: town.id,
                     name: town.name,
                     points: town.getPoints(),
                     availableTroopsInTown: troopsInTown,
-                    outerTroopsInTown: outerTroopsInTown
+                    outerTroopsInTown: outerTroopsInTown,
+                    supportTroopsInTown: supportTroopsInTown
                 };
             });
- 
+
             let formattedData = {
+                id: playerId,
+                name: playerName,
+                lastUpdated: encryptData(lastUpdated),
+                towns: encryptData(townsData),
+                alliance: encryptData(allianceName),
+                culturalLevel: encryptData(cl),
                 token: localStorage.getItem(storagetoken),
-                key: localStorage.getItem(storagekey),
-                lastUpdated: lastUpdated,
-                culturalLevel: cl,
-                townRequests: townsData
             };
- 
-            fetch(`https://localhost:7003/api/Player/AddTownsToPlayer?playerId=${playerId}`, {
+
+            return formattedData;
+        }
+
+        function encryptData(data) {
+            let encryptedData = CryptoJS.AES.encrypt(JSON.stringify(data), localStorage.getItem(storagekey)).toString();
+            return encryptedData;
+        }
+
+        function decryptData(data) {
+            let decryptedData = CryptoJS.AES.decrypt(data, localStorage.getItem(storagekey)).toString(CryptoJS.enc.Utf8);
+            return JSON.parse(decryptedData);
+        }
+
+        function countTroops(player) {
+            let decryptedPlayer = {
+                ...player,
+                culturalLevel: decryptData(player.culturalLevel),
+                alliance: decryptData(player.alliance),
+                towns: decryptData(player.towns)
+            };
+
+            let troopCounts = {};
+
+            decryptedPlayer.towns.forEach(town => {
+                town.availableTroopsInTown.forEach(troop => {
+                    troopCounts[troop.name] = (troopCounts[troop.name] || 0) + troop.count;
+                });
+
+                town.outerTroopsInTown.forEach(troop => {
+                    troopCounts[troop.name] = (troopCounts[troop.name] || 0) + troop.count;
+                });
+            });
+
+            return {
+                id: decryptedPlayer.id,
+                name: decryptedPlayer.name,
+                troopCounts: troopCounts,
+                culturalLevel: decryptedPlayer.culturalLevel
+            };
+        }
+
+        function createGroup() {
+            var wnd = Layout.wnd.Create(Layout.wnd.TYPE_DIALOG, "CreateGroup");
+            wnd.setContent('');
+
+            var windowExists = false;
+            var windowItem = null;
+            for (var item of document.getElementsByClassName('ui-dialog-title')) {
+                if (item.innerHTML == "CreateGroup") {
+                    windowExists = true;
+                    windowItem = item;
+                }
+            }
+            if (!windowExists) {
+                var wnd = Layout.wnd.Create(Layout.wnd.TYPE_DIALOG, "CreateGroup");
+                wnd.setContent('');
+            }
+            for (var item of document.getElementsByClassName('ui-dialog-title')) {
+                if (item.innerHTML == "CreateGroup") {
+                    windowItem = item;
+                }
+            }
+
+            wnd.setHeight('200');
+            wnd.setWidth('300');
+            wnd.setTitle("CreateGroup");
+            var title = windowItem;
+            var frame = title.parentElement.parentElement.children[1].children[4];
+            frame.innerHTML = '';
+
+            var body = document.createElement('div');
+            var element = document.createElement('h3');
+            element.innerHTML = "CreateGroup";
+            element.style.margin = '0 auto';
+            body.appendChild(element);
+            let inputGroupName = document.createElement('input');
+            inputGroupName.type = 'text';
+            inputGroupName.id = 'groupName';
+            inputGroupName.placeholder = 'Group name';
+
+            let inputToken = document.createElement('input');
+            inputToken.type = 'text';
+            inputToken.id = 'newToken';
+            inputToken.placeholder = 'Token';
+
+            let tokenDiv = document.createElement('div');
+            tokenDiv.style.display = 'flex';
+            tokenDiv.style.justifyContent = 'space-between';
+
+            let inputKey = document.createElement('input');
+            inputKey.type = 'text';
+            inputKey.id = 'newKey';
+            inputKey.placeholder = 'Key';
+
+            let buttonGenerateToken = document.createElement('button');
+            buttonGenerateToken.id = 'generateToken';
+            buttonGenerateToken.innerHTML = 'Generate token';
+
+            tokenDiv.appendChild(inputToken);
+            tokenDiv.appendChild(buttonGenerateToken);
+
+            buttonGenerateToken.onclick = function () {
+                let token = generateToken();
+                inputToken.value = token;
+            };
+
+            let keyDiv = document.createElement('div');
+            keyDiv.style.display = 'flex';
+            keyDiv.style.justifyContent = 'space-between';
+
+            let buttonGenerateKey = document.createElement('button');
+            buttonGenerateKey.id = 'generateKey';
+            buttonGenerateKey.innerHTML = 'Generate key';
+
+            let buttonSave = document.createElement('button');
+            buttonSave.id = 'saveGroup';
+            buttonSave.innerHTML = 'Save group';
+
+            keyDiv.appendChild(inputKey);
+            keyDiv.appendChild(buttonGenerateKey);
+
+            buttonGenerateKey.onclick = function () {
+                let key = generateKey();
+                inputKey.value = key;
+            };
+
+            buttonSave.onclick = function () {
+                let groupName = document.getElementById('groupName').value;
+                let token = document.getElementById('newToken').value;
+                let key = document.getElementById('newKey').value;
+                let world = Game.world_id;
+
+                if (!groupName || !token || !key) {
+                    alert('Please fill in all fields');
+                    return;
+                }
+
+                let body = {
+                    name: groupName,
+                    world: world,
+                    token: token,
+                };
+
+                fetch(`https://www.grepotroopcounter.be/api/Group/CreateGroup`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json'
+                    },
+                    body: JSON.stringify(body)
+                }).then(async response => {
+                    if (!response.ok) {
+                        var errorMessage = await response.text();
+                        console.log('Failed to create group:', errorMessage);
+                    } else {
+                        console.log('Group created successfully');
+                        localStorage.setItem(storagetoken, token);
+                        localStorage.setItem(storagekey, key);
+                        setTimeout(() => {
+                            location.reload();
+                        }, 2000);
+                    }
+                }
+                ).catch(error => {
+                    console.error('Error creating group:', error);
+                });
+
+
+            };
+
+            body.appendChild(inputGroupName);
+            body.appendChild(tokenDiv);
+            body.appendChild(keyDiv);
+            body.appendChild(buttonSave);
+            frame.appendChild(body);
+        }
+
+        function generateKey() {
+            var key = '';
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+            var charactersLength = characters.length;
+            for (var i = 0; i < 8; i++) {
+                key += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return key;
+        }
+
+        function generateToken() {
+            var token = '';
+            var characters = 'ABCDEFGHIJKLMNOPQRSTUVWXYZabcdefghijklmnopqrstuvwxyz';
+            var charactersLength = characters.length;
+            for (var i = 0; i < 24; i++) {
+                token += characters.charAt(Math.floor(Math.random() * charactersLength));
+            }
+            return token;
+        }
+
+        function fetchData() {
+            let formattedData = getPlayerData();
+
+            let body = {
+                id: formattedData.id,
+                lastUpdated: formattedData.lastUpdated,
+                towns: formattedData.towns,
+                alliance: formattedData.alliance,
+                culturalLevel: formattedData.culturalLevel,
+                token: localStorage.getItem(storagetoken)
+            };
+
+            fetch(`https://www.grepotroopcounter.be/api/Players/AddEncryptedData`, {
                 method: 'POST',
                 headers: {
                     'Content-Type': 'application/json'
                 },
-                body: JSON.stringify(formattedData)
-            })
-                .then(async response => {
-                    if (!response.ok) {
-                        var errorMessage = await response.text();
-                        if (errorMessage && errorMessage === "Player doesn't exist") {
-                            console.log('Failed due to player not existing, creating player');
-                            createPlayer();
-                        }
-                    } else {
-                        console.log('Towns data sent successfully');
+                body: JSON.stringify(body)
+            }).then(async response => {
+                if (!response.ok) {
+                    var errorMessage = await response.text();
+                    if (errorMessage && errorMessage === "Player doesn't exist") {
+                        console.log('Failed due to player not existing, creating player');
+                        createPlayer();
                     }
-                })
-                .catch(error => {
-                    console.error('Error sending towns data:', error);
-                });
+                } else {
+                    console.log('Towns data sent successfully');
+                }
+            }).catch(error => {
+                console.error('Error sending towns data:', error);
+            });
         };
     });
 })();
