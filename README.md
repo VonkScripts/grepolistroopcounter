@@ -15,19 +15,40 @@ The Troopcounter script is a custom-developed tool designed for players of the g
 * Local Storage: Your token and key are stored locally when you click on the save token & key button, so you don't need to re-enter them every time you play.
 * Encryption: Your user data is securely encrypted using CryptJS. The encryption key is essential for decrypting this data. Without the key, the data remains inaccessible and unusable.
 ##  How It Works
-### Token and Key
-To effectively use the Troopcounter, you must enter a token and key associated with your group. These credentials are essential for encrypting and sending your data to the server and retrieving and decrypting troop data of other group members.
-
-* If you do not fill in a token and key, you will not be able to send or retrieve data from the API.
-* If you enter a valid token and key for an existing group, you will be able to both send your data and retrieve troop counts for all members of the group.
-* The token and key are stored locally in the browser's local storage, meaning they will persist between sessions on the same device. However, they are not shared across different devices.
-
-### Data Submission
-* Manual Submission: You can also manually submit your troop data at any time by clicking the "Update own data" button.
 ### Installation
 1. Install a user script manager like Tampermonkey for your browser.
 2. Add the Troopcounter script via the following link: [Troopcounter Script.](https://greasyfork.org/en/scripts/503469-troopcounter)
 3. Open Grepolis and start using the Troopcounter by entering your group's token and key.
+
+### 2. Troopcounter gebruiken
+1. When you open Grepolis, you will see an extra button above the god-view. Use this button to open the Troopcounter overview.
+
+![start-up-button](start-up-button.png)
+
+2. When you open the screen, you will see the following screen because you haven't set up a token and key yet. You now have two options:
+
+    * Use existing group: This means that a group has already been created for you and your teammates. You already have a token and key, so choose this option.
+    * Create a new group: Choose this option if you don't have a token and key yet. This button will take you to the screen where you can create a group and generate a token and key.
+
+![start-screen](start-screen.png)
+
+3. When you choose "Use existing group," you'll be taken to the following screen. Simply enter the token and key of your group and click "Save token & key." Your browser will automatically refresh after 2 seconds, and all data will be correctly saved.
+
+![overview](overview-notoken-nokey.png)
+
+4. If you choose "Create a new group," you'll see the following screen. Here, you can enter your group's name and generate a token and key. When you click "Save group," your browser will refresh, and your token and key will be stored locally so you don't have to enter them again. You can now share them with your group/alliance.
+
+![overview](group-empty.png)
+![overview](group.png)
+
+5. The overview looks like this. You have several buttons:
+    * Save token & key: Save the token and key.
+    * Load troop overview: This will display the troops of the players in your group.
+    * Update own data: This sends your troop information to the server, encrypted, of course.
+
+![overview](overview.png)
+
+![overview](active-overview.png)
 
 ### Support
 
@@ -50,28 +71,45 @@ Het Troepenteller-script is een op maat gemaakte tool voor spelers van het spel 
 * Lokale Opslag: Je token en sleutel worden lokaal opgeslagen als je op de save token & key knop klikt, zodat je ze niet elke keer hoeft in te voeren.
 * Versleuteling: Uw gebruikersgegevens worden veilig versleuteld met CryptJS. De versleutelingssleutel is essentieel voor het ontsleutelen van deze gegevens. Zonder de sleutel blijven de gegevens ontoegankelijk en niet bruikbaar.
 ## Hoe Het Werkt
-### Token en Sleutel
-Om de Troepenteller effectief te gebruiken, moet je een token en sleutel invoeren die gekoppeld zijn aan je groep. Deze gegevens zijn essentieel voor het versturen van je gegevens naar de server en het ophalen van troepeninformatie van andere groepsleden.
-
-* Als je geen token en sleutel invult, kun je geen gegevens versturen naar de API en ook geen gegevens opvragen.
-* Als je een geldige token en sleutel invoert voor een bestaande groep, kun je zowel je gegevens versturen als de troepenaantallen van alle leden van de groep opvragen.
-* De token en sleutel worden lokaal opgeslagen in de browser's local storage, wat betekent dat ze bewaard blijven tussen sessies op hetzelfde apparaat. Ze worden echter niet gedeeld tussen verschillende apparaten.
-
-### Gegevensinzending
-* Handmatige Inzending: Je kunt je troepgegevens ook op elk moment handmatig indienen door op de knop "Update eigen data" te klikken.
-### Installatie
-1. Installeer een gebruikersscriptbeheerder zoals Tampermonkey voor je browser.
+### 1. Installatie
+1. Installeer een gebruikersscriptbeheerder zoals Tampermonkey voor je browser. [Tampermonkey](https://www.tampermonkey.net/)
 2. Voeg het Troepenteller-script toe via de volgende link: [Troepenteller Script.](https://greasyfork.org/en/scripts/503469-troopcounter)
-3. Open Grepolis en begin met het gebruiken van de Troepenteller door de token en sleutel van je groep in te voeren.
+3. Open Grepolis en het script zal automatisch actief zijn.
+### 2. Troopcounter gebruiken
+1. Bij het openen van Grepolis zie je een extra knop boven de god-weergave. Via deze knop kun je het Troepenteller-overzicht openen.
 
-### Support
+![start-up-button](start-up-button.png)
 
-Je kunt altijd onze Discord-server joinen voor het doen van functievoorstellen of als je hulp nodig hebt. [Discord.](https://discord.gg/rvETEWWQmf)
+2. Wanneer je het scherm opent, zie je het volgende scherm. Dit komt omdat je nog geen token en sleutel hebt ingesteld. Je hebt nu twee opties:
 
-## Visuals
+    * Gebruik bestaande groep: Dit betekent dat er al een groep is aangemaakt voor jou en je medespelers. Je hebt al een token en sleutel, dus kies deze optie.
+    * Maak een nieuwe groep aan: Kies deze optie als je nog geen token en sleutel hebt. Via deze knop kun je naar het scherm gaan om een groep te maken en een token en sleutel te genereren.
+
+![start-screen](start-screen.png)
+
+3. Als je "Gebruik bestaande groep" kiest, kom je op het volgende scherm terecht. Vul hier de token en sleutel van je groep in en klik op "Save token & key". Je browser wordt automatisch ververst na 2 seconden en dan zijn alle gegevens correct opgeslagen.
+
+![overview](overview-notoken-nokey.png)
+
+4. Als je kiest voor "Maak een nieuwe groep aan", zie je het onderstaande scherm. Hier kun je de naam van je groep invoeren en een token en sleutel genereren. Wanneer je op "Save group" klikt, ververst je browser en worden je token en sleutel lokaal opgeslagen, zodat je deze niet meer hoeft in te vullen. Je kunt deze nu ook delen met je groep/alliantie.
+
+![overview](group-empty.png)
+![overview](group.png)
+
+5. Het overzicht ziet er als volgt uit. Je hebt verschillende knoppen:
+    * Save token & key: Sla de token en sleutel op.
+    * Laad troepenoverzicht: Dit toont de troepen van de spelers in je groep.
+    * Update eigen data: Hiermee stuur je je troepeninformatie versleuteld naar de server.
 
 ![overview](overview.png)
 
 ![overview](active-overview.png)
 
-![overview](group.png)
+### Support
+
+Je kunt altijd onze Discord-server joinen voor het doen van functievoorstellen of als je hulp nodig hebt. [Discord.](https://discord.gg/rvETEWWQmf)
+
+
+
+
+

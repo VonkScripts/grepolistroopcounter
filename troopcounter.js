@@ -22,6 +22,90 @@
             }
         }, 10000);
 
+        var style = document.createElement('style');
+        style.innerHTML = `
+            .troopcounter-button {
+                border: 1px solid #d9b310;
+                cursor: pointer;
+                display: block;
+                font-size: 12px;
+                font-weight: bold;
+                line-height: 30px;
+                margin: 0 0 5px;
+                padding: 4px;
+                text-align: center;
+                text-decoration: none;
+                border-radius: 5px;
+            }
+            .dialog-input {
+                border: 1px solid #d9b310;
+                border-radius: 5px;
+                height: 30px;
+                margin: 5px 0;
+                padding: 0 5px;
+                width: 100%;
+            }
+            .dialog-button {
+                background-color: #fff;
+                border: 1px solid #d9b310;
+                border-radius: 5px;
+                color: #d9b310;
+                cursor: pointer;
+                display: block;
+                font-size: 16px;
+                font-weight: bold;
+                height: 30px;
+                line-height: 30px;
+                margin: 5px 0;
+                padding: 0;
+                text-align: center;
+                text-decoration: none;
+                width: 100%;
+            }
+            .dialog-button:hover {
+                background-color: #d9b310;
+                color: #fff;
+            }
+            .troopcounter-generate-button {
+                border-radius: 15px;
+                width: 120px;
+                font-weight: bold;
+                padding: 5px;
+            }
+            #troopcounterTable {
+                border-collapse: collapse;
+                table-layout: fixed;
+                position: relative;
+            }
+
+            #troopcounterTable th,
+            #troopcounterTable td {
+                padding: 8px;
+                text-align: center;
+                border: 1px solid #ddd;
+            }
+
+            #troopcounterTable th {
+                position: sticky;
+                top: 0;
+                background-color: #cdcdcd;
+                z-index: 2; 
+            }
+
+            #troopcounterTable th:first-child,
+            #troopcounterTable td:first-child {
+                position: sticky;
+                left: 0;
+                background-color: #cdcdcd;
+                z-index: 1; 
+            }
+
+            #troopcounterTable th:first-child {
+                z-index: 3; 
+            }
+        `;
+        document.head.appendChild(style);
+
         const worldId = Game.world_id;
 
         const storagetoken = `token_${worldId}`;
@@ -39,7 +123,11 @@
                 a.innerHTML = "T";
                 document.getElementById('ui_box').appendChild(a);
                 $("#troopCounterButton").click(function () {
-                    createTroopcounterWindow();
+                    if (localStorage.getItem(storagetoken) !== null && localStorage.getItem(storagekey) !== null && localStorage.getItem(storagetoken) !== "" && localStorage.getItem(storagekey) !== "") {
+                        createTroopcounterWindow();
+                    } else {
+                        startDialog();
+                    }
                 });
             }
         }
@@ -140,15 +228,16 @@
             body.appendChild(tableContainer);
             frame.appendChild(body);
 
-            // Add login inputs
             var loginDiv = document.createElement('div');
             loginDiv.style.marginTop = "10px";
             loginDiv.innerHTML = `
                         Token: <input type="text" id="token"><br>
                         Key: <input type="text" id="key"><br>
-                        <button id="saveButton">Save token & key</button>
-                        <button id="loadButton">Laad troepenoverzicht</button>
-                        <button id="fetchData">Update eigen data</button>
+                        <div style="display:flex; margin-top: 15px; gap: 10px">
+                            <button id="saveButton" class="troopcounter-button">Save token & key</button>
+                            <button id="loadButton" class="troopcounter-button">Laad troepenoverzicht</button>
+                            <button id="fetchData" class="troopcounter-button">Update eigen data</button>
+                        </div>
                         `;
             frame.appendChild(loginDiv);
 
@@ -164,6 +253,7 @@
             createGroupButton.innerHTML = 'Create new group';
             createGroupButton.id = 'createGroup';
             createGroupButton.style.marginTop = '10px';
+            createGroupButton.classList.add('troopcounter-button');
 
             var discordButton = document.createElement('button');
             discordButton.innerHTML = 'Join Discord';
@@ -171,6 +261,7 @@
             discordButton.onclick = function () {
                 window.open('https://discord.gg/rvETEWWQmf', '_blank');
             };
+            discordButton.classList.add('troopcounter-button');
 
             buttonContainer.appendChild(createGroupButton);
             buttonContainer.appendChild(discordButton);
@@ -409,15 +500,13 @@
         }
 
         function createGroup() {
-            var wnd = Layout.wnd.Create(Layout.wnd.TYPE_DIALOG, "CreateGroup");
-            wnd.setContent('');
-
             var windowExists = false;
             var windowItem = null;
             for (var item of document.getElementsByClassName('ui-dialog-title')) {
                 if (item.innerHTML == "CreateGroup") {
                     windowExists = true;
                     windowItem = item;
+                    return;
                 }
             }
             if (!windowExists) {
@@ -430,8 +519,8 @@
                 }
             }
 
-            wnd.setHeight('200');
-            wnd.setWidth('300');
+            wnd.setHeight('300');
+            wnd.setWidth('375');
             wnd.setTitle("CreateGroup");
             var title = windowItem;
             var frame = title.parentElement.parentElement.children[1].children[4];
@@ -446,24 +535,31 @@
             inputGroupName.type = 'text';
             inputGroupName.id = 'groupName';
             inputGroupName.placeholder = 'Group name';
+            inputGroupName.style.marginTop = '10px';
+            inputGroupName.style.width = '60%';
+            inputGroupName.style.height = '30px';
 
             let inputToken = document.createElement('input');
             inputToken.type = 'text';
             inputToken.id = 'newToken';
             inputToken.placeholder = 'Token';
+            inputToken.style.width = '60%';
 
             let tokenDiv = document.createElement('div');
             tokenDiv.style.display = 'flex';
             tokenDiv.style.justifyContent = 'space-between';
+            tokenDiv.style.marginTop = '10px';
 
             let inputKey = document.createElement('input');
             inputKey.type = 'text';
             inputKey.id = 'newKey';
             inputKey.placeholder = 'Key';
+            inputKey.style.width = '60%';
 
             let buttonGenerateToken = document.createElement('button');
             buttonGenerateToken.id = 'generateToken';
             buttonGenerateToken.innerHTML = 'Generate token';
+            buttonGenerateToken.classList.add('troopcounter-generate-button');
 
             tokenDiv.appendChild(inputToken);
             tokenDiv.appendChild(buttonGenerateToken);
@@ -476,14 +572,17 @@
             let keyDiv = document.createElement('div');
             keyDiv.style.display = 'flex';
             keyDiv.style.justifyContent = 'space-between';
+            keyDiv.style.marginTop = '10px';
 
             let buttonGenerateKey = document.createElement('button');
             buttonGenerateKey.id = 'generateKey';
             buttonGenerateKey.innerHTML = 'Generate key';
+            buttonGenerateKey.classList.add('troopcounter-generate-button');
 
             let buttonSave = document.createElement('button');
             buttonSave.id = 'saveGroup';
             buttonSave.innerHTML = 'Save group';
+            buttonSave.classList.add('dialog-button');
 
             keyDiv.appendChild(inputKey);
             keyDiv.appendChild(buttonGenerateKey);
@@ -561,6 +660,85 @@
                 token += characters.charAt(Math.floor(Math.random() * charactersLength));
             }
             return token;
+        }
+
+        function startDialog() {
+            var windowExists = false;
+            var windowItem = null;
+            for (var item of document.getElementsByClassName('ui-dialog-title')) {
+                if (item.innerHTML == "TroopCounter - Start") {
+                    windowExists = true;
+                    windowItem = item;
+                    return;
+                }
+            }
+            if (!windowExists) {
+                var wnd = Layout.wnd.Create(Layout.wnd.TYPE_DIALOG, "TroopCounter - Start");
+                wnd.setContent('');
+            }
+            for (var item of document.getElementsByClassName('ui-dialog-title')) {
+                if (item.innerHTML == "TroopCounter - Start") {
+                    windowItem = item;
+                }
+            }
+
+            wnd.setHeight('270');
+            wnd.setWidth('300');
+            wnd.setTitle("TroopCounter - Start");
+            var title = windowItem;
+            var frame = title.parentElement.parentElement.children[1].children[4];
+            frame.innerHTML = '';
+
+            var body = document.createElement('div');
+            var element = document.createElement('h3');
+            element.innerHTML = "TroopCounter - Start";
+            element.style.margin = '0 auto';
+            body.appendChild(element);
+
+            var buttonContainer = document.createElement('div');
+            buttonContainer.style.display = 'flex';
+            buttonContainer.style.flexDirection = 'column';
+            buttonContainer.style.alignItems = 'flex-end';
+            buttonContainer.style.marginTop = '10px';
+            buttonContainer.style.float = 'right';
+            buttonContainer.style.width = '100%';
+
+            var useExistingButton = document.createElement('button');
+            useExistingButton.innerHTML = 'Gebruik bestaande groep ⓘ';
+            useExistingButton.id = 'useExistingGroup';
+            useExistingButton.style.marginTop = '10px';
+            useExistingButton.classList.add('dialog-button');
+            useExistingButton.title = "Gebruik deze optie als je al een token en key hebt. Via deze knop kan je de token en key invullen en je troepenoverzicht laden.";
+
+            var createNewButton = document.createElement('button');
+            createNewButton.innerHTML = 'Maak een nieuwe groep ⓘ';
+            createNewButton.id = 'createNewGroup';
+            createNewButton.style.marginTop = '10px';
+            createNewButton.classList.add('dialog-button');
+            createNewButton.title = "Gebruik deze optie als je nog geen token en key hebt. Via deze knop kan je een groep aanmaken en genereer je een token en key die je kan delen met je alliantiegenoten.";
+
+            var moreInfoButton = document.createElement('button');
+            moreInfoButton.innerHTML = 'Meer info';
+            moreInfoButton.style.marginTop = '10px';
+            moreInfoButton.classList.add('dialog-button');
+            moreInfoButton.onclick = function () {
+                alert("Je hebt twee opties:\n\n1. Gebruik bestaande groep: Als je al een token en sleutel hebt, kies dan deze optie. Je kunt ze invoeren en je troepenoverzicht laden.\n\n2. Maak een nieuwe groep: Als je nog geen token en sleutel hebt, kun je hier een groep aanmaken. Je genereert een token en sleutel die je kunt delen met je alliantiegenoten.");
+            };
+
+            useExistingButton.onclick = function () {
+                createTroopcounterWindow();
+            }
+
+            createNewButton.onclick = function () {
+                createGroup();
+            }
+
+            buttonContainer.appendChild(useExistingButton);
+            buttonContainer.appendChild(createNewButton);
+            buttonContainer.appendChild(moreInfoButton);
+
+            frame.appendChild(body);
+            frame.appendChild(buttonContainer);
         }
 
         function fetchData() {
