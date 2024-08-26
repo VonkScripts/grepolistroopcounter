@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Troopcounter
 // @namespace    https://tampermonkey.net/
-// @version      2024-08-13
+// @version      2024-08-26
 // @description  Simple custom made troopcounter
 // @author       Vonk
 // @match        https://*.grepolis.com/game/*
