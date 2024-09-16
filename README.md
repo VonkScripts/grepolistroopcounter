@@ -2,7 +2,7 @@
 
 ## Disclaimer
 
-This script is has been approved by the Grepolis NL support team, it is not on the wiki yet but support gave me permission to share and use the troopcounter. It is only approved on the NL servers. I am not responsible for any misuse of this script, including manipulating it to perform unauthorized actions. If you get banned for using or abusing this script, I am not responsible.
+This script has been approved by the Grepolis NL support team, it is not on the wiki yet but support gave me permission to share and use the troopcounter. It is only approved on the NL servers. I am not responsible for any misuse of this script, including manipulating it to perform unauthorized actions. If you get banned for using or abusing this script, I am not responsible.
 
 ## Overview
 The Troopcounter script is a custom-developed tool designed for players of the game Grepolis to track and manage troop data efficiently. This tool enables synchronization of troop information with a central server, viewing troop counts of group members, and regular updates of your own data. It is particularly useful for players who are part of an organized group and wish to maintain an overview of collective troop strength.
