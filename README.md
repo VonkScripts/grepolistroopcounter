@@ -2,7 +2,7 @@
 
 ## Disclaimer
 
-This script is currently under review for use on the NL Grepolis servers and cannot be used until it has been approved. Once approved, it should only be used on the NL servers. I am not responsible for any misuse of this script, including manipulating it to perform unauthorized actions. If you get banned for using or abusing this script, I am not responsible.
+This script has been approved by the Grepolis NL support team, it is not on the wiki yet but support gave me permission to share and use the troopcounter. It is only approved on the NL servers. I am not responsible for any misuse of this script, including manipulating it to perform unauthorized actions. If you get banned for using or abusing this script, I am not responsible.
 
 ## Overview
 The Troopcounter script is a custom-developed tool designed for players of the game Grepolis to track and manage troop data efficiently. This tool enables synchronization of troop information with a central server, viewing troop counts of group members, and regular updates of your own data. It is particularly useful for players who are part of an organized group and wish to maintain an overview of collective troop strength.
@@ -58,7 +58,7 @@ You can always join our Discord server for feature suggestions or if you need as
 
 ## Disclaimer
 
-Dit script is momenteel in beoordeling voor gebruik op de NL Grepolis-servers en kan niet worden gebruikt totdat het is goedgekeurd. Na goedkeuring mag het alleen worden gebruikt op de NL-servers. Ik ben niet verantwoordelijk voor misbruik van dit script, inclusief het manipuleren ervan om ongeautoriseerde acties uit te voeren. Als je wordt verbannen door het gebruik of misbruik van dit script, ben ik niet verantwoordelijk.
+Dit script is goedgekeurd door het Grepolis NL-supportteam, het staat nog niet op de wiki, maar support heeft me toestemming gegeven om de troopcounter te delen en te gebruiken. Het script mag alleen worden gebruikt op de NL-servers. Ik ben niet verantwoordelijk voor misbruik van dit script, inclusief het manipuleren ervan om ongeautoriseerde acties uit te voeren. Als je wordt verbannen door het gebruik of misbruik van dit script, ben ik niet verantwoordelijk.
 
 ## Overzicht
 Het Troepenteller-script is een op maat gemaakte tool voor spelers van het spel Grepolis om troepen efficiënt te volgen en te beheren. Met deze tool kun je troepeninformatie synchroniseren met een centrale server, de troepenaantallen van groepsleden bekijken en regelmatig je eigen gegevens bijwerken. Dit is vooral handig voor spelers die deel uitmaken van een georganiseerde groep en een overzicht willen houden van de collectieve troepensterkte.
