@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         Troopcounter
 // @namespace    https://tampermonkey.net/
-// @version      2024-08-13
-// @description  Simple custom made troopcounter
+// @version      2024-09-21
+// @description  A troopcounter to track your own and your alliance members troops. 
 // @author       Vonk
 // @match        https://*.grepolis.com/game/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @grant        none
 // @require      https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
+// @downloadURL https://update.greasyfork.org/scripts/503469/Troopcounter.user.js
+// @updateURL https://update.greasyfork.org/scripts/503469/Troopcounter.meta.js
 // ==/UserScript==
 
 (function () {
@@ -277,8 +279,8 @@
             document.getElementById('saveButton').addEventListener('click', function () {
                 var token = document.getElementById('token').value;
                 var key = document.getElementById('key').value;
-                localStorage.setItem(storagetoken, token);
-                localStorage.setItem(storagekey, key);
+                localStorage.setItem(storagetoken, token.trim());
+                localStorage.setItem(storagekey, key.trim());
 
                 setTimeout(function () {
                     location.reload();
@@ -406,6 +408,9 @@
             const playerName = Game.player_name;
             const allianceName = MM.getModels().Player[Game.player_id].attributes.alliance_name;
             let townsObject = ITowns.getTowns();
+            let MMTowns = MM.getModels().Town;
+            let currentCP = MM.getModels().Player[Game.player_id].attributes.cultural_points;
+            let nextlevelCP = MM.getModels().Player[Game.player_id].attributes.needed_cultural_points_for_next_step;
             let cl = MM.getModels().Player[Game.player_id].attributes.cultural_step;
             let lastUpdated = Date.now().toString();
 
@@ -442,6 +447,13 @@
                     id: town.id,
                     name: town.name,
                     points: town.getPoints(),
+                    sea_id: MMTowns[town.id].attributes.sea_id,
+                    x: MMTowns[town.id].attributes.abs_x,
+                    y: MMTowns[town.id].attributes.abs_y,
+                    god: town.god(),
+                    wallLevel: town.buildings().attributes.wall,
+                    phalanx: town.researches().attributes.phalanx,
+                    ram: town.researches().attributes.ram,
                     availableTroopsInTown: troopsInTown,
                     outerTroopsInTown: outerTroopsInTown,
                     supportTroopsInTown: supportTroopsInTown
@@ -455,6 +467,8 @@
                 towns: encryptData(townsData),
                 alliance: encryptData(allianceName),
                 culturalLevel: encryptData(cl),
+                currentCP: encryptData(currentCP),
+                nextlevelCP: encryptData(nextlevelCP),
                 token: localStorage.getItem(storagetoken),
             };
 
@@ -468,6 +482,10 @@
 
         function decryptData(data) {
             let decryptedData = CryptoJS.AES.decrypt(data, localStorage.getItem(storagekey)).toString(CryptoJS.enc.Utf8);
+            //if decrypted data is malformed return invalid data string
+            if (decryptedData === "") {
+                return "Invalid data";
+            }
             return JSON.parse(decryptedData);
         }
 
