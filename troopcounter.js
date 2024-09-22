@@ -8,8 +8,6 @@
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @grant        none
 // @require      https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
-// @downloadURL https://update.greasyfork.org/scripts/503469/Troopcounter.user.js
-// @updateURL https://update.greasyfork.org/scripts/503469/Troopcounter.meta.js
 // ==/UserScript==
 
 (function () {
@@ -770,6 +768,9 @@
                 towns: formattedData.towns,
                 alliance: formattedData.alliance,
                 culturalLevel: formattedData.culturalLevel,
+                additionalTownCount: formattedData.additionalTownCount,
+                currentCP: formattedData.currentCP,
+                nextlevelCP: formattedData.nextlevelCP,
                 token: localStorage.getItem(storagetoken)
             };
 
