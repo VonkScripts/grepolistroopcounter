@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Troopcounter
 // @namespace    https://tampermonkey.net/
-// @version      2024-09-21
+// @version      2024-09-22
 // @description  A troopcounter to track your own and your alliance members troops. 
 // @author       Vonk
 // @match        https://*.grepolis.com/game/*
