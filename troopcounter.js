@@ -409,6 +409,7 @@
             const allianceName = MM.getModels().Player[Game.player_id].attributes.alliance_name;
             let townsObject = ITowns.getTowns();
             let MMTowns = MM.getModels().Town;
+            let additionalTownCount = MM.getModels().Player[Game.player_id].attributes.additional_town_count;
             let currentCP = MM.getModels().Player[Game.player_id].attributes.cultural_points;
             let nextlevelCP = MM.getModels().Player[Game.player_id].attributes.needed_cultural_points_for_next_step;
             let cl = MM.getModels().Player[Game.player_id].attributes.cultural_step;
@@ -467,6 +468,7 @@
                 towns: encryptData(townsData),
                 alliance: encryptData(allianceName),
                 culturalLevel: encryptData(cl),
+                additionalTownCount: encryptData(additionalTownCount),
                 currentCP: encryptData(currentCP),
                 nextlevelCP: encryptData(nextlevelCP),
                 token: localStorage.getItem(storagetoken),
