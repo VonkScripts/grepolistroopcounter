@@ -1,13 +1,15 @@
 // ==UserScript==
 // @name         Troopcounter
 // @namespace    https://tampermonkey.net/
-// @version      2024-09-22
+// @version      2024-09-30
 // @description  A troopcounter to track your own and your alliance members troops. 
 // @author       Vonk
 // @match        https://*.grepolis.com/game/*
 // @icon         data:image/gif;base64,R0lGODlhAQABAAAAACH5BAEKAAEALAAAAAABAAEAAAICTAEAOw==
 // @grant        none
 // @require      https://cdnjs.cloudflare.com/ajax/libs/crypto-js/4.1.1/crypto-js.min.js
+// @downloadURL https://update.greasyfork.org/scripts/503469/Troopcounter.user.js
+// @updateURL https://update.greasyfork.org/scripts/503469/Troopcounter.meta.js
 // ==/UserScript==
 
 (function () {
@@ -19,6 +21,7 @@
         setTimeout(function () {
             if (localStorage.getItem(storagetoken) !== null && localStorage.getItem(storagekey) !== null) {
                 fetchData();
+                detectChanges();
             }
         }, 10000);
 
@@ -111,17 +114,67 @@
         const storagetoken = `token_${worldId}`;
         const storagekey = `key_${worldId}`;
 
+        let currentData = null;
+
 
         function addTroopCounterButton() {
             if (document.getElementById('troopCounterButton') == null) {
-                var a = document.createElement('div');
-                a.id = "troopCounterButton";
-                a.className = 'btn_settings circle_button_small';
-                a.style.top = '90px';
-                a.style.right = '57px';
-                a.style.zIndex = '10000';
-                a.innerHTML = "T";
-                document.getElementById('ui_box').appendChild(a);
+                const ulElement = document.querySelector('.content ul');
+                const troopCounterLi = document.createElement('li');
+                troopCounterLi.id = 'troopCounterButton';
+                troopCounterLi.className = 'main_menu_item';
+                troopCounterLi.innerHTML = `
+                        <span class="content_wrapper">
+                            <span class="button_wrapper">
+                            <span class="button">
+                                <span class="icon"></span>
+                            </span>
+                            </span>
+                            <span class="name_wrapper">
+                            <span class="name">Troop Counter</span>
+                            </span>
+                        </span>
+                        `;
+
+                // Create the fully red box list item
+                const refreshBoxLi = document.createElement('li');
+                refreshBoxLi.className = 'main_menu_item';
+                refreshBoxLi.id = 'troopCounterRefreshButton';
+                refreshBoxLi.style.backgroundColor = 'green';
+
+
+                const contentWrapper = document.createElement('span');
+                contentWrapper.className = 'content_wrapper';
+
+                const buttonWrapper = document.createElement('span');
+                buttonWrapper.className = 'button_wrapper';
+
+                const button = document.createElement('span');
+                button.className = 'button';
+
+                const icon = document.createElement('span');
+                icon.className = 'icon';
+
+                const nameWrapper = document.createElement('span');
+                nameWrapper.className = 'name_wrapper';
+
+                const name = document.createElement('span');
+                name.className = 'name';
+                name.textContent = 'Refresh data';
+
+                button.appendChild(icon);
+                buttonWrapper.appendChild(button);
+                contentWrapper.appendChild(buttonWrapper);
+                nameWrapper.appendChild(name);
+                contentWrapper.appendChild(nameWrapper);
+                refreshBoxLi.appendChild(contentWrapper);
+
+                refreshBoxLi.addEventListener('click', function () {
+                    fetchData();
+                });
+
+                ulElement.appendChild(troopCounterLi);
+                ulElement.appendChild(refreshBoxLi);
                 $("#troopCounterButton").click(function () {
                     if (localStorage.getItem(storagetoken) !== null && localStorage.getItem(storagekey) !== null && localStorage.getItem(storagetoken) !== "" && localStorage.getItem(storagekey) !== "") {
                         createTroopcounterWindow();
@@ -297,6 +350,59 @@
             });
         }
 
+        function compareData() {
+            let data = getPlayerData(false);
+
+            if (currentData === null) {
+                return true;
+            }
+
+            if (currentData.towns.length !== data.towns.length) {
+                return true;
+            }
+
+            if(currentData.alliance !== data.alliance 
+                || currentData.culturalLevel !== data.culturalLevel 
+                || currentData.additionalTownCount !== data.additionalTownCount 
+                || currentData.currentCP !== data.currentCP 
+                || currentData.nextlevelCP !== data.nextlevelCP) {
+                    return true;
+                }
+
+            for (let i = 0; i < currentData.towns.length; i++) {
+                const currentTown = currentData.towns[i];
+                const newTown = data.towns[i];
+
+                if (currentTown.id !== newTown.id ||
+                    currentTown.points !== newTown.points ||
+                    currentTown.x !== newTown.x ||
+                    currentTown.y !== newTown.y ||
+                    currentTown.wallLevel !== newTown.wallLevel ||
+                    currentTown.phalanx !== newTown.phalanx ||
+                    currentTown.ram !== newTown.ram ||
+                    currentTown.god !== newTown.god) {
+                    return true;
+                }
+
+                if (currentTown.availableTroopsInTown.length !== newTown.availableTroopsInTown.length ||
+                    currentTown.outerTroopsInTown.length !== newTown.outerTroopsInTown.length ||
+                    currentTown.supportTroopsInTown.length !== newTown.supportTroopsInTown.length) {
+                    return true;
+                }
+            }
+
+            return false;
+        }
+
+        function detectChanges() {
+            setInterval(() => {
+                if (compareData()) {
+                    document.getElementById("troopCounterRefreshButton").style.backgroundColor = 'red';
+                }
+            }, 600000);
+        }
+
+
         function fetchTroopCountData() {
             var token = localStorage.getItem(storagetoken);
             var key = localStorage.getItem(storagekey);
@@ -401,7 +507,7 @@
                 });
         }
 
-        function getPlayerData() {
+        function getPlayerData(updateCheck = true) {
             const playerId = Game.player_id
             const playerName = Game.player_name;
             const allianceName = MM.getModels().Player[Game.player_id].attributes.alliance_name;
@@ -459,6 +565,21 @@
                 };
             });
 
+            if (!updateCheck) {
+                return {
+                    id: playerId,
+                    name: playerName,
+                    lastUpdated: lastUpdated,
+                    towns: townsData,
+                    alliance: allianceName,
+                    culturalLevel: cl,
+                    additionalTownCount: additionalTownCount,
+                    currentCP: currentCP,
+                    nextlevelCP: nextlevelCP,
+                    token: localStorage.getItem(storagetoken),
+                };
+            }
+
             let formattedData = {
                 id: playerId,
                 name: playerName,
@@ -471,6 +592,8 @@
                 nextlevelCP: encryptData(nextlevelCP),
                 token: localStorage.getItem(storagetoken),
             };
+
+            document.getElementById("troopCounterRefreshButton").style.backgroundColor = 'green';
 
             return formattedData;
         }
@@ -761,6 +884,7 @@
 
         function fetchData() {
             let formattedData = getPlayerData();
+            currentData = getPlayerData(false);
 
             let body = {
                 id: formattedData.id,
