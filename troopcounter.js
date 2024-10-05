@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Troopcounter
 // @namespace    https://tampermonkey.net/
-// @version      2024-09-30
+// @version      2024-10-05
 // @description  A troopcounter to track your own and your alliance members troops. 
 // @author       Vonk
 // @match        https://*.grepolis.com/game/*
@@ -20,7 +20,6 @@
         console.log("Troopcounter loaded");
         setTimeout(function () {
             if (localStorage.getItem(storagetoken) !== null && localStorage.getItem(storagekey) !== null) {
-                fetchData();
                 detectChanges();
             }
         }, 10000);
@@ -526,6 +525,7 @@
                 let outerTroopsInTown = [];
                 let supportUnits = town.unitsSupport();
                 let supportTroopsInTown = [];
+                
 
                 if (homeUnits) {
                     troopsInTown = Object.keys(homeUnits).map(unitType => ({
