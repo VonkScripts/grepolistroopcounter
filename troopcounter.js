@@ -398,7 +398,7 @@
                 if (compareData()) {
                     document.getElementById("troopCounterRefreshButton").style.backgroundColor = 'red';
                 }
-            }, 600000);
+            }, 3600000);
         }
 
 
