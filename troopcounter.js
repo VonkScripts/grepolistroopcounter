@@ -1,7 +1,7 @@
 // ==UserScript==
 // @name         Troopcounter
 // @namespace    https://tampermonkey.net/
-// @version      2024-10-05
+// @version      2024-10-14
 // @description  A troopcounter to track your own and your alliance members troops. 
 // @author       Vonk
 // @match        https://*.grepolis.com/game/*
@@ -14,6 +14,101 @@
 
 (function () {
     'use strict';
+
+    const languages = [
+        { value: 'nl', text: 'Dutch' },
+        { value: 'en', text: 'English' },
+        { value: 'el', text: 'Greek' },
+        { value: 'it', text: 'Italian' }
+    ];
+    let selectedLanguage = localStorage.getItem("troopcounterLanguage") || "en";
+
+    const translations = {
+        saveToken: {
+            nl: "Save token & key",
+            en: "Save token & key",
+            el: "Αποθήκευση κλειδιού και διακριτικού",
+            it: "Salva token e chiave"
+        },
+        loadTroops: {
+            nl: "Laad troepenoverzicht",
+            en: "Load troop overview",
+            el: "Φόρτωση επισκόπησης στρατευμάτων",
+            it: "Carica panoramica truppe"
+        },
+        updateData: {
+            nl: "Update eigen data",
+            en: "Update own data",
+            el: "Ενημέρωση δικών δεδομένων",
+            it: "Aggiorna i propri dati"
+        },
+        joinDiscord: {
+            nl: "Join Discord",
+            en: "Join Discord",
+            el: "Σύνδεση με το Discord",
+            it: "Partecipa a Discord"
+        },
+        existingGroup: {
+            nl: "Gebruik bestaande groep ⓘ",
+            en: "Use existing group ⓘ",
+            el: "Χρήση υπάρχουσας ομάδας ⓘ",
+            it: "Usa gruppo esistente ⓘ"
+        },
+        existingGroupDesc: {
+            nl: "Gebruik deze optie als je al een token en key hebt. Via deze knop kan je de token en key invullen en je troepenoverzicht laden.",
+            en: "Use this option if you already have a token and key. This button lets you enter the token and key to load your troop overview.",
+            el: "Χρησιμοποιήστε αυτήν την επιλογή αν έχετε ήδη κλειδί και διακριτικό. Μπορείτε να τα εισάγετε για να φορτώσετε την επισκόπηση στρατευμάτων.",
+            it: "Usa questa opzione se hai già un token e una chiave. Questo pulsante ti permette di inserire il token e la chiave per caricare la panoramica truppe."
+        },
+        newGroup: {
+            nl: "Maak een nieuwe groep ⓘ",
+            en: "Create a new group ⓘ",
+            el: "Δημιουργία νέας ομάδας ⓘ",
+            it: "Crea un nuovo gruppo ⓘ"
+        },
+        newGroupDesc: {
+            nl: "Gebruik deze optie als je nog geen token en key hebt. Via deze knop kan je een groep aanmaken en genereer je een token en key die je kan delen met je alliantiegenoten.",
+            en: "Use this option if you don’t have a token and key yet. This button lets you create a group and generate a token and key to share with your alliance members.",
+            el: "Χρησιμοποιήστε αυτήν την επιλογή αν δεν έχετε ακόμη κλειδί και διακριτικό. Δημιουργείτε μια ομάδα και παράγετε κλειδί και διακριτικό για να το μοιραστείτε με τα μέλη της συμμαχίας σας.",
+            it: "Usa questa opzione se non hai ancora un token e una chiave. Questo pulsante ti permette di creare un gruppo e generare un token e una chiave da condividere con i membri della tua alleanza."
+        },
+        moreInfo: {
+            nl: "Meer info",
+            en: "More info",
+            el: "Περισσότερες πληροφορίες",
+            it: "Maggiori informazioni"
+        },
+        refreshData: {
+            nl: "Ververs gegevens",
+            en: "Refresh Data",
+            el: "Ανανέωση Δεδομένων",
+            it: "Aggiorna Dati"
+        },
+        generateToken: {
+            nl: "Genereer token",
+            en: "Generate Token",
+            el: "Δημιουργία Κωδικού",
+            it: "Genera Token"
+        },
+        generateKey: {
+            nl: "Genereer sleutel",
+            en: "Generate Key",
+            el: "Δημιουργία Κλειδιού",
+            it: "Genera Chiave"
+        },
+        optionsInfo: {
+            nl: "Je hebt twee opties:\n\n1. Gebruik bestaande groep: Als je al een token en sleutel hebt, kies dan deze optie. Je kunt ze invoeren en je troepenoverzicht laden.\n\n2. Maak een nieuwe groep: Als je nog geen token en sleutel hebt, kun je hier een groep aanmaken. Je genereert een token en sleutel die je kunt delen met je alliantiegenoten.",
+            en: "You have two options:\n\n1. Use existing group: If you already have a token and key, choose this option. You can enter them and load your troop overview.\n\n2. Create a new group: If you don't have a token and key yet, you can create a group here. You will generate a token and key that you can share with your alliance members.",
+            el: "Έχετε δύο επιλογές:\n\n1. Χρήση υπάρχουσας ομάδας: Αν έχετε ήδη κωδικό και κλειδί, επιλέξτε αυτήν την επιλογή. Μπορείτε να τα εισάγετε και να φορτώσετε την επισκόπηση στρατευμάτων σας.\n\n2. Δημιουργία νέας ομάδας: Αν δεν έχετε ακόμη κωδικό και κλειδί, μπορείτε να δημιουργήσετε μια ομάδα εδώ. Θα δημιουργηθεί ένας κωδικός και κλειδί που μπορείτε να μοιραστείτε με τα μέλη της συμμαχίας σας.",
+            it: "Hai due opzioni:\n\n1. Usa gruppo esistente: Se hai già un token e una chiave, scegli questa opzione. Puoi inserirli e caricare la panoramica delle tue truppe.\n\n2. Crea un nuovo gruppo: Se non hai ancora un token e una chiave, puoi creare un gruppo qui. Genererai un token e una chiave da condividere con i membri della tua alleanza."
+        },
+        createGroup: {
+            nl: 'Maak een nieuwe groep',   
+            en: 'Create new group',        
+            el: 'Δημιουργία νέας ομάδας',    
+            it: 'Crea un nuovo gruppo'  
+        }
+    };
 
     $(document).ready(function () {
         addTroopCounterButton();
@@ -30,11 +125,11 @@
                 border: 1px solid #d9b310;
                 cursor: pointer;
                 display: block;
-                font-size: 12px;
+                font-size: 11px;
                 font-weight: bold;
-                line-height: 30px;
+                line-height: 20px;
                 margin: 0 0 5px;
-                padding: 4px;
+                padding: 2px;
                 text-align: center;
                 text-decoration: none;
                 border-radius: 5px;
@@ -159,7 +254,7 @@
 
                 const name = document.createElement('span');
                 name.className = 'name';
-                name.textContent = 'Refresh data';
+                name.textContent = translations.refreshData[selectedLanguage];
 
                 button.appendChild(icon);
                 buttonWrapper.appendChild(button);
@@ -276,7 +371,6 @@
 
             table.appendChild(headerRow);
 
-
             body.appendChild(tableContainer);
             frame.appendChild(body);
 
@@ -285,36 +379,60 @@
             loginDiv.innerHTML = `
                         Token: <input type="text" id="token"><br>
                         Key: <input type="text" id="key"><br>
-                        <div style="display:flex; margin-top: 15px; gap: 10px">
-                            <button id="saveButton" class="troopcounter-button">Save token & key</button>
-                            <button id="loadButton" class="troopcounter-button">Laad troepenoverzicht</button>
-                            <button id="fetchData" class="troopcounter-button">Update eigen data</button>
+                        <div id=tc-button" style="display:flex; margin-top: 15px; gap: 10px">
+                            <button id="saveButton" class="troopcounter-button">${translations.saveToken[selectedLanguage]}</button>
+                            <button id="loadButton" class="troopcounter-button">${translations.loadTroops[selectedLanguage]}</button>
+                            <button id="fetchData" class="troopcounter-button">${translations.updateData[selectedLanguage]}</button>
                         </div>
+                        
                         `;
+
             frame.appendChild(loginDiv);
 
             var buttonContainer = document.createElement('div');
             buttonContainer.style.display = 'flex';
-            buttonContainer.style.flexDirection = 'column';
-            buttonContainer.style.alignItems = 'flex-end';
+            buttonContainer.style.flexDirection = 'row';
             buttonContainer.style.marginTop = '10px';
             buttonContainer.style.float = 'right';
+            buttonContainer.style.gap = '10px';
             buttonContainer.style.position = 'relative';
 
             var createGroupButton = document.createElement('button');
-            createGroupButton.innerHTML = 'Create new group';
+            createGroupButton.innerHTML = translations.createGroup[selectedLanguage];
             createGroupButton.id = 'createGroup';
+            createGroupButton.style.height = '30px';
             createGroupButton.style.marginTop = '10px';
             createGroupButton.classList.add('troopcounter-button');
 
             var discordButton = document.createElement('button');
-            discordButton.innerHTML = 'Join Discord';
+            discordButton.innerHTML = translations.joinDiscord[selectedLanguage];
             discordButton.style.marginTop = '10px';
+            discordButton.style.height = '30px';
             discordButton.onclick = function () {
                 window.open('https://discord.gg/rvETEWWQmf', '_blank');
             };
             discordButton.classList.add('troopcounter-button');
 
+            var languageSelect = document.createElement('select');
+            languageSelect.id = 'languageSelect';
+            languageSelect.style.marginTop = '10px';
+            languageSelect.style.height = '30px';
+            languageSelect.style.borderRadius = '5px';
+            languageSelect.style.border = '1px solid #d9b310';
+            languageSelect.style.padding = '0 5px';
+            languageSelect.style.backgroundColor = '#fff';
+
+            languages.forEach(language => {
+                let option = document.createElement('option');
+                option.value = language.value;
+                option.text = language.text;
+                languageSelect.appendChild(option);
+            });
+
+            languageSelect.value = selectedLanguage;
+
+
+            buttonContainer.appendChild(languageSelect);
             buttonContainer.appendChild(createGroupButton);
             buttonContainer.appendChild(discordButton);
 
@@ -336,6 +454,14 @@
                     location.reload();
                 }, 1000);
             });
+
+            languageSelect.onchange = function () {
+                selectedLanguage = languageSelect.value;
+                localStorage.setItem("troopcounterLanguage", selectedLanguage);
+                setTimeout(() => {
+                    window.location.reload();
+                }, 2000);
+            };
 
             document.getElementById('loadButton').addEventListener('click', function () {
                 fetchTroopCountData();
@@ -360,13 +486,13 @@
                 return true;
             }
 
-            if(currentData.alliance !== data.alliance 
-                || currentData.culturalLevel !== data.culturalLevel 
-                || currentData.additionalTownCount !== data.additionalTownCount 
-                || currentData.currentCP !== data.currentCP 
+            if (currentData.alliance !== data.alliance
+                || currentData.culturalLevel !== data.culturalLevel
+                || currentData.additionalTownCount !== data.additionalTownCount
+                || currentData.currentCP !== data.currentCP
                 || currentData.nextlevelCP !== data.nextlevelCP) {
-                    return true;
-                }
+                return true;
+            }
 
             for (let i = 0; i < currentData.towns.length; i++) {
                 const currentTown = currentData.towns[i];
@@ -525,7 +651,7 @@
                 let outerTroopsInTown = [];
                 let supportUnits = town.unitsSupport();
                 let supportTroopsInTown = [];
-                
+
 
                 if (homeUnits) {
                     troopsInTown = Object.keys(homeUnits).map(unitType => ({
@@ -699,7 +825,7 @@
 
             let buttonGenerateToken = document.createElement('button');
             buttonGenerateToken.id = 'generateToken';
-            buttonGenerateToken.innerHTML = 'Generate token';
+            buttonGenerateToken.innerHTML = translations.generateToken[selectedLanguage];
             buttonGenerateToken.classList.add('troopcounter-generate-button');
 
             tokenDiv.appendChild(inputToken);
@@ -717,7 +843,7 @@
 
             let buttonGenerateKey = document.createElement('button');
             buttonGenerateKey.id = 'generateKey';
-            buttonGenerateKey.innerHTML = 'Generate key';
+            buttonGenerateKey.innerHTML = translations.generateKey[selectedLanguage];
             buttonGenerateKey.classList.add('troopcounter-generate-button');
 
             let buttonSave = document.createElement('button');
@@ -849,21 +975,21 @@
             useExistingButton.id = 'useExistingGroup';
             useExistingButton.style.marginTop = '10px';
             useExistingButton.classList.add('dialog-button');
-            useExistingButton.title = "Gebruik deze optie als je al een token en key hebt. Via deze knop kan je de token en key invullen en je troepenoverzicht laden.";
+            useExistingButton.title = translations.existingGroupDesc[selectedLanguage];
 
             var createNewButton = document.createElement('button');
             createNewButton.innerHTML = 'Maak een nieuwe groep ⓘ';
             createNewButton.id = 'createNewGroup';
             createNewButton.style.marginTop = '10px';
             createNewButton.classList.add('dialog-button');
-            createNewButton.title = "Gebruik deze optie als je nog geen token en key hebt. Via deze knop kan je een groep aanmaken en genereer je een token en key die je kan delen met je alliantiegenoten.";
+            createNewButton.title = translations.newGroupDesc[selectedLanguage];
 
             var moreInfoButton = document.createElement('button');
-            moreInfoButton.innerHTML = 'Meer info';
+            moreInfoButton.innerHTML = translations.moreInfo[selectedLanguage];
             moreInfoButton.style.marginTop = '10px';
             moreInfoButton.classList.add('dialog-button');
             moreInfoButton.onclick = function () {
-                alert("Je hebt twee opties:\n\n1. Gebruik bestaande groep: Als je al een token en sleutel hebt, kies dan deze optie. Je kunt ze invoeren en je troepenoverzicht laden.\n\n2. Maak een nieuwe groep: Als je nog geen token en sleutel hebt, kun je hier een groep aanmaken. Je genereert een token en sleutel die je kunt delen met je alliantiegenoten.");
+                alert(translations.optionsInfo[selectedLanguage]);
             };
 
             useExistingButton.onclick = function () {
