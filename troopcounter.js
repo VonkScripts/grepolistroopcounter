@@ -379,7 +379,7 @@
             loginDiv.innerHTML = `
                         Token: <input type="text" id="token"><br>
                         Key: <input type="text" id="key"><br>
-                        <div id=tc-button" style="display:flex; margin-top: 15px; gap: 10px">
+                        <div id="tc-button" style="display:flex; margin-top: 15px; gap: 10px">
                             <button id="saveButton" class="troopcounter-button">${translations.saveToken[selectedLanguage]}</button>
                             <button id="loadButton" class="troopcounter-button">${translations.loadTroops[selectedLanguage]}</button>
                             <button id="fetchData" class="troopcounter-button">${translations.updateData[selectedLanguage]}</button>
